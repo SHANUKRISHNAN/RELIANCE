@@ -790,15 +790,11 @@ elif TAB == "history":
         st.markdown("<div style='height:.6rem'></div>", unsafe_allow_html=True)
 
         # ── Window selector ───────────────────────────────────────────────────
-        WIN_OPTIONS = [("1M",22),("3M",66),("6M",130),("1Y",252),
-                       ("3Y",756),("5Y",1260),("ALL",len(df_raw))]
-        sel_win = st.select_slider(
-            "Chart window",
-            options=WIN_OPTIONS,
-            value=("1Y",252),
-            format_func=lambda x: x[0],
-        )
-        hist = df_raw.iloc[-sel_win[1]:].copy().reset_index()
+        WIN_MAP    = {"1M":22,"3M":66,"6M":130,"1Y":252,"3Y":756,"5Y":1260,"ALL":len(df_raw)}
+        WIN_LABELS = list(WIN_MAP.keys())
+        sel_label  = st.select_slider("Chart window", options=WIN_LABELS, value="1Y")
+        sel_win_n  = WIN_MAP[sel_label]
+        hist = df_raw.iloc[-sel_win_n:].copy().reset_index()
         hist.columns = ["Date"] + list(hist.columns[1:])
         hist["Date"]  = pd.to_datetime(hist["Date"])
         hist["Dir"]   = (hist["Close"] >= hist["Open"]).map({True:"UP",False:"DN"})
