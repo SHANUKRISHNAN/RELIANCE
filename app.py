@@ -363,10 +363,12 @@ div[data-testid="stToggle"] [role="switch"][aria-checked="true"]{{
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  CONSTANTS
+#  CONSTANTS  — always resolved relative to this file so they work on
+#               Streamlit Cloud regardless of working directory
 # ─────────────────────────────────────────────────────────────────────────────
-PLOT_DIR  = "outputs/plots"
-MODEL_DIR = "outputs/models"
+_APP_DIR  = os.path.dirname(os.path.abspath(__file__))
+PLOT_DIR  = os.path.join(_APP_DIR, "outputs", "plots")
+MODEL_DIR = os.path.join(_APP_DIR, "outputs", "models")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -379,6 +381,16 @@ def plot_img(path, cap=""):
         st.markdown(f"""<div class='plot-frame'>
           <img src='data:image/png;base64,{b}' style='width:100%;border-radius:3px;display:block;'>
           {"<div class='plot-cap'>"+cap+"</div>" if cap else ""}
+        </div>""", unsafe_allow_html=True)
+    else:
+        fname = os.path.basename(path)
+        st.markdown(f"""<div class='plot-frame' style='text-align:center;padding:2rem 1rem;'>
+          <div style='font-family:Share Tech Mono,monospace;font-size:.65rem;
+               color:#FF3B5C;letter-spacing:.1em;margin-bottom:.4rem;'>FILE NOT FOUND</div>
+          <div style='font-family:Share Tech Mono,monospace;font-size:.72rem;
+               color:#8A9BC0;'>{fname}</div>
+          <div style='font-family:Share Tech Mono,monospace;font-size:.62rem;
+               color:#2A3560;margin-top:.4rem;'>Place in outputs/plots/ alongside app.py</div>
         </div>""", unsafe_allow_html=True)
 
 def dark_alt(chart, h=300):
